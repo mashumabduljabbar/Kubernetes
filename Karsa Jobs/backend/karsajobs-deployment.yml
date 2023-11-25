@@ -1,0 +1,42 @@
+apiVersion: apps/v1 # Versi API
+kind: Deployment # Jenis Objek Kubernetes
+metadata:
+  name: karsajobs-deployment # Nama Deployment
+  namespace: karsajobs-ns # Nama Namespace
+  labels:
+    app: backend
+spec:
+  replicas: 3 # Menentukan jumlah replika
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+        - name: karsajobs
+          image: mashumjabbar/karsajobs:latest # Menggunakan Image yang dibuat dari tahap sebelumnya
+          imagePullPolicy : IfNotPresent # Pull jika image tidak ada
+          ports:
+            - containerPort: 8080 # Port expose dari IP Pod
+          resources:
+            limits:
+              cpu: "250m" # Menggunakan 1/4 CPU
+              memory: "256Mi" # Menggunakan 256 MB Memory
+          env:
+            - name: APP_PORT # APP_PORT dengan nilai “8080”
+              value: "8080"
+            - name: MONGO_HOST # MONGO_HOST dengan nilai yang diambil dari MongoDB Service
+              value: mongo
+            - name: MONGO_USER # MONGO_USER dengan nilai yang diambil dari MongoDB Secret (MONGO_ROOT_USERNAME)
+              valueFrom:
+                secretKeyRef:
+                  name: mongo-secret
+                  key: MONGO_ROOT_USERNAME
+            - name: MONGO_PASS # MONGO_PASS dengan nilai yang diambil dari MongoDB Secret (MONGO_ROOT_PASSWORD)
+              valueFrom:
+                secretKeyRef:
+                  name: mongo-secret
+                  key: MONGO_ROOT_PASSWORD
