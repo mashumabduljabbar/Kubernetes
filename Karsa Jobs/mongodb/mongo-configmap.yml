@@ -1,9 +1,0 @@
-apiVersion: v1 # Versi API
-kind: ConfigMap # Jenis Objek Kubernetes
-metadata:
-  name: mongo-config
-  namespace: karsajobs-ns # Nama Namespace
-data: #Lokasi
-  mongo.conf: |
-    storage:
-      dbPath: /data/db 
